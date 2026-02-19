@@ -11,9 +11,16 @@
     <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
     <link rel="apple-touch-icon" href="assets/icon.svg">
 
-    <!-- Fonts -->
+    <!-- Preconnect to CDNs for faster resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://unpkg.com">
+
+    <!-- Preload critical background image -->
+    <link rel="preload" as="image" href="assets/hero-bg.jpg" fetchpriority="high">
+
+    <!-- Fonts (swap ensures text is visible while fonts load) -->
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&family=Noto+Sans+Bengali:wght@400;600;700&display=swap"
         rel="stylesheet">
@@ -38,8 +45,8 @@
         }
     </script>
 
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Lucide Icons (deferred — not needed for first paint) -->
+    <script src="https://unpkg.com/lucide@latest" defer></script>
 
     <!-- Custom Styles -->
     <link rel="stylesheet" href="css/style.css">
@@ -49,7 +56,7 @@
 
     <!-- Background Image -->
     <div class="fixed inset-0 -z-10 bg-cover bg-center brightness-[0.55] saturate-[1.2]"
-        style="background-image: url('assets/hero-background.jpg');"></div>
+        style="background-image: url('assets/hero-bg.jpg');"></div>
 
     <!-- App Container -->
     <div class="w-full max-w-[420px] px-5 py-6 flex flex-col gap-7">

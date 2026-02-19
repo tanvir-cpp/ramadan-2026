@@ -1,4 +1,4 @@
-const CACHE = 'ramadan-2026-v2';
+const CACHE = 'ramadan-2026-v3';
 const STATIC = [
     'index.html',
     'calendar.html',
@@ -7,7 +7,7 @@ const STATIC = [
     'js/app.js',
     'js/calendar.js',
     'manifest.json',
-    'assets/hero-background.jpg',
+    'assets/hero-bg.jpg',
     'assets/icon.svg',
 ];
 
