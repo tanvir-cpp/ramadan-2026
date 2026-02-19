@@ -58,6 +58,23 @@ function setupEventListeners() {
         applyLanguage();
         updateDateTime();
     });
+
+    // Fullscreen toggle
+    document.getElementById('fullscreen-toggle').addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => { });
+        } else {
+            document.exitFullscreen();
+        }
+    });
+
+    document.addEventListener('fullscreenchange', updateFullscreenIcon);
+}
+
+function updateFullscreenIcon() {
+    const isFS = !!document.fullscreenElement;
+    document.querySelector('.fullscreen-icon-enter').classList.toggle('hidden', isFS);
+    document.querySelector('.fullscreen-icon-exit').classList.toggle('hidden', !isFS);
 }
 
 function applyLanguage() {

@@ -9,7 +9,7 @@ A beautiful, mobile-first static web app that displays **Sehar & Iftar timings**
 ## ✨ Features
 
 | Feature | Description |
-|---|---|
+| --- | --- |
 | ⏳ **Live Countdown** | Real-time countdown to the next Sehar or Iftar with a glowing progress bar |
 | 🕌 **Prayer Times** | Expandable tray showing all six daily prayer times (Fajr → Isha) |
 | 🌐 **Bilingual** | Toggle between **বাংলা** and **English** with a single tap |
@@ -32,7 +32,7 @@ A beautiful, mobile-first static web app that displays **Sehar & Iftar timings**
 
 ## 📂 Project Structure
 
-```
+```text
 static_hero/
 ├── index.html          # Main HTML — layout, Tailwind config, CDN links
 ├── style.css           # Custom CSS for language toggling, prayer grid, animations
@@ -48,7 +48,7 @@ static_hero/
 
 Prayer timings are fetched from the **[Aladhan API](https://aladhan.com/prayer-times-api)**:
 
-```
+```text
 GET https://api.aladhan.com/v1/calendarByCity/{year}/{month}
     ?city=Dhaka
     &country=Bangladesh
@@ -79,7 +79,7 @@ Simply open `index.html` in any modern browser — no server required.
 npx serve .
 ```
 
-### 3. That's it!
+### 3. That's it
 
 The app will automatically fetch today's prayer timings for Dhaka and start the countdown.
 
@@ -90,7 +90,7 @@ The app will automatically fetch today's prayer timings for Dhaka and start the 
 The app ships with full **Bengali** and **English** support. Tap the language pill in the top-right corner to switch.
 
 | Key | English | বাংলা |
-|---|---|---|
+| --- | --- | --- |
 | Countdown (Sehar) | UNTIL SEHAR | সেহরির বাকি |
 | Countdown (Iftar) | UNTIL IFTAR | ইফতারের বাকি |
 | Location | Dhaka, Bangladesh | ঢাকা, বাংলাদেশ |
@@ -113,7 +113,5 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
-<p align="center">
-  <b>রমজান মোবারক! 🌙</b><br>
-  <sub>May this Ramadan bring peace and blessings.</sub>
-</p>
+**রমজান মোবারক! 🌙**
+*May this Ramadan bring peace and blessings.*

@@ -64,14 +64,22 @@
                 </div>
             </div>
 
-            <!-- Right: Lang Toggle + Clock -->
+            <!-- Right: Lang Toggle + Fullscreen + Clock -->
             <div class="flex flex-col items-end gap-2">
-                <div id="lang-toggle"
-                    class="flex items-center bg-white/5 border border-white/10 rounded-full p-0.5 cursor-pointer hover:border-white/20 transition-all">
-                    <span
-                        class="lang-en text-[0.65rem] font-bold px-3 py-1 rounded-full transition-all duration-300 text-white/40">EN</span>
-                    <span
-                        class="lang-bn active text-[0.65rem] font-bold px-3 py-1 rounded-full transition-all duration-300 bg-gold/20 text-gold">বাংলা</span>
+                <div class="flex items-center gap-2">
+                    <div id="lang-toggle"
+                        class="flex items-center bg-white/5 border border-white/10 rounded-full p-0.5 cursor-pointer hover:border-white/20 transition-all">
+                        <span
+                            class="lang-en text-[0.65rem] font-bold px-3 py-1 rounded-full transition-all duration-300 text-white/40">EN</span>
+                        <span
+                            class="lang-bn active text-[0.65rem] font-bold px-3 py-1 rounded-full transition-all duration-300 bg-gold/20 text-gold">বাংলা</span>
+                    </div>
+                    <button id="fullscreen-toggle"
+                        class="w-8 h-8 flex items-center justify-center bg-white/5 border border-white/10 rounded-full cursor-pointer hover:border-white/20 hover:bg-white/10 transition-all"
+                        title="Toggle Fullscreen">
+                        <i data-lucide="maximize" class="w-3.5 h-3.5 text-white/60 fullscreen-icon-enter"></i>
+                        <i data-lucide="minimize" class="w-3.5 h-3.5 text-white/60 fullscreen-icon-exit hidden"></i>
+                    </button>
                 </div>
                 <div class="flex items-center gap-1.5 text-white/70 text-[0.72rem] font-medium">
                     <span id="current-date">---</span>
