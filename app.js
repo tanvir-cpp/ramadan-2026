@@ -4,28 +4,102 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     updateDateTime();
     setInterval(updateDateTime, 1000);
+    // Initialize body class
+    document.body.className = `lang-${currentLang}`;
 });
+
+let currentLang = 'bn'; // Default to Bengali
+
+const translations = {
+    en: {
+        sehar_label: "SEHAR ENDS",
+        iftar_label: "IFTAR STARTS",
+        countdown_sehar: "UNTIL SEHAR",
+        countdown_iftar: "UNTIL IFTAR",
+        countdown_sehar_tomorrow: "UNTIL SEHAR (TOMORROW)",
+        tray_label: "Today's Prayer Times",
+        dhaka: "Dhaka, Bangladesh",
+        location_label: "Location",
+        loading: "Loading...",
+        date_locale: 'en-GB'
+    },
+    bn: {
+        sehar_label: "সেহরি (শেষ সময়)",
+        iftar_label: "ইফতার (শুরু সময়)",
+        countdown_sehar: "সেহরির বাকি",
+        countdown_iftar: "ইফতারের বাকি",
+        countdown_sehar_tomorrow: "আগামীকালের সেহরি",
+        tray_label: "আজকের নামাজের সময়",
+        dhaka: "ঢাকা, বাংলাদেশ",
+        location_label: "অবস্থান",
+        loading: "লোড হচ্ছে...",
+        date_locale: 'bn-BD'
+    }
+};
+
+const prayerNames = {
+    en: ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'],
+    bn: ['ফজর', 'সূর্যোদয়', 'যোহর', 'আসর', 'মাগরিব', 'এশা']
+};
 
 function updateDateTime() {
     const now = new Date();
+    const t = translations[currentLang];
 
     // Format Date: e.g., "Thursday, 19 Feb 2026"
-    const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
-    document.getElementById('current-date').textContent = now.toLocaleDateString('en-GB', options).toUpperCase();
+    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    document.getElementById('current-date').textContent = now.toLocaleDateString(t.date_locale, options).toUpperCase();
 
     // Format Time: e.g., "06:15:26 PM"
     const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-    document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', timeOptions);
+    document.getElementById('current-time').textContent = now.toLocaleTimeString(t.date_locale, timeOptions);
 }
 
 function setupEventListeners() {
     const toggleBtn = document.getElementById('toggle-tray');
     const tray = document.getElementById('full-prayer-grid');
+    const langBtn = document.getElementById('lang-toggle');
 
     toggleBtn.addEventListener('click', () => {
         tray.classList.toggle('active');
         toggleBtn.classList.toggle('active');
     });
+
+    langBtn.addEventListener('click', () => {
+        currentLang = currentLang === 'bn' ? 'en' : 'bn';
+        document.body.className = `lang-${currentLang}`;
+        updateLanguageUI();
+        updateDateTime(); // Immediate refresh
+    });
+}
+
+function updateLanguageUI() {
+    const t = translations[currentLang];
+
+    // Update Toggle Button State
+    const enBtn = document.querySelector('.lang-en');
+    const bnBtn = document.querySelector('.lang-bn');
+    if (currentLang === 'en') {
+        enBtn.classList.add('active');
+        bnBtn.classList.remove('active');
+    } else {
+        enBtn.classList.remove('active');
+        bnBtn.classList.add('active');
+    }
+
+    // Update Tray Label
+    document.querySelector('.tray-toggle span:first-child').textContent = t.tray_label;
+
+    // Update Location
+    document.querySelector('.location span').textContent = t.dhaka;
+
+    // Refresh Prayer Grid for translated names
+    const cachedData = getCachedTimings();
+    if (cachedData) {
+        const today = new Date();
+        const dayIdx = today.getDate() - 1;
+        populatePrayerGrid(cachedData[dayIdx].timings);
+    }
 }
 
 async function initApp() {
@@ -61,7 +135,7 @@ async function fetchAndCacheTimings() {
             }));
             updateUI(result.data);
         } else {
-            statusEl.textContent = "API Error";
+            statusEl.textContent = translations[currentLang].loading;
         }
     } catch (error) {
         statusEl.textContent = "Offline";
@@ -94,10 +168,12 @@ function updateUI(calendarData) {
 
 function populatePrayerGrid(timings) {
     const grid = document.getElementById('full-prayer-grid');
-    const names = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-    grid.innerHTML = names.map(name => `
+    const enNames = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+    const displayNames = currentLang === 'en' ? enNames : prayerNames.bn;
+
+    grid.innerHTML = enNames.map((name, i) => `
         <div class="p-item">
-            <span class="p-name">${name.toUpperCase()}</span>
+            <span class="p-name">${displayNames[i].toUpperCase()}</span>
             <span class="p-time">${formatTime(timings[name].split(' ')[0])}</span>
         </div>
     `).join('');
@@ -119,7 +195,10 @@ function startCountdown(calendarData) {
     const tick = () => {
         const now = new Date();
         const dayIdx = now.getDate() - 1;
+        if (!calendarData[dayIdx]) return;
+
         const todayTimings = calendarData[dayIdx].timings;
+        const t = translations[currentLang];
 
         const [sH, sM] = todayTimings.Fajr.split(' ')[0].split(':').map(Number);
         const [iH, iM] = todayTimings.Maghrib.split(' ')[0].split(':').map(Number);
@@ -130,12 +209,11 @@ function startCountdown(calendarData) {
         const iftarDate = new Date(now);
         iftarDate.setHours(iH, iM, 0);
 
-        let target, status, startTime;
+        let target, statusText, startTime;
 
         if (now < seharDate) {
             target = seharDate;
-            status = "UNTIL SEHAR";
-            // Start from previous Iftar
+            statusText = t.countdown_sehar;
             const prevDayIdx = dayIdx > 0 ? dayIdx - 1 : 0;
             const prevIftar = calendarData[prevDayIdx].timings.Maghrib.split(' ')[0];
             const [pIH, pIM] = prevIftar.split(':').map(Number);
@@ -144,7 +222,7 @@ function startCountdown(calendarData) {
             startTime = prevDate.setHours(pIH, pIM, 0);
         } else if (now < iftarDate) {
             target = iftarDate;
-            status = "UNTIL IFTAR";
+            statusText = t.countdown_iftar;
             startTime = seharDate.getTime();
         } else {
             const nextDay = calendarData[dayIdx + 1];
@@ -153,7 +231,7 @@ function startCountdown(calendarData) {
                 const tmDate = new Date(now);
                 tmDate.setDate(tmDate.getDate() + 1);
                 target = tmDate.setHours(tsH, tsM, 0);
-                status = "UNTIL SEHAR (TOMORROW)";
+                statusText = t.countdown_sehar_tomorrow;
                 startTime = iftarDate.getTime();
             } else {
                 statusEl.textContent = "END OF MONTH";
@@ -171,7 +249,7 @@ function startCountdown(calendarData) {
         const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
         const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
 
-        statusEl.textContent = status;
+        statusEl.textContent = statusText;
         countdownEl.textContent = `${h}:${m}:${s}`;
     };
 
