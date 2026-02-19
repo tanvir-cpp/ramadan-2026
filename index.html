@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ramadan 2026 | রমজান ২০২৬</title>
-    <meta name="description" content="Ramadan Sehar and Iftar timings for Bangladesh.">
+    <meta name="description" content="Ramadan Sehar and Iftar timings for Dhaka, Bangladesh.">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,76 +17,78 @@
 
 <body>
     <div class="app-container">
-        <!-- Top Meta -->
-        <div class="top-meta">
-            <div class="left-meta">
-                <div class="location">
+
+        <!-- Header Row -->
+        <header class="header">
+            <div class="header-left">
+                <div class="header-row">
                     <i data-lucide="map-pin"></i>
-                    <span>Dhaka, Bangladesh</span>
+                    <span class="location-text">ঢাকা, বাংলাদেশ</span>
                 </div>
-                <div class="hijri">
+                <div class="header-row">
                     <i data-lucide="calendar"></i>
                     <span id="hijri-date">Loading...</span>
                 </div>
             </div>
-            <div class="right-meta">
-                <div class="lang-toggle-container">
-                    <button id="lang-toggle" class="lang-btn">
-                        <span class="lang-en">EN</span>
-                        <span class="lang-divider"></span>
-                        <span class="lang-bn active">বাংলা</span>
-                    </button>
-                </div>
-                <div class="current-datetime">
-                    <span id="current-date">-- --- ----</span>
-                    <span class="dot">•</span>
-                    <span id="current-time">00:00:00 AM</span>
+            <div class="header-right">
+                <button id="lang-toggle" class="lang-btn">
+                    <span class="lang-en">EN</span>
+                    <span class="lang-divider"></span>
+                    <span class="lang-bn active">বাংলা</span>
+                </button>
+                <div class="live-clock">
+                    <span id="current-date">---</span>
+                    <span class="separator">•</span>
+                    <span id="current-time">--:--:--</span>
                 </div>
             </div>
-        </div>
+        </header>
 
-        <!-- Hero Countdown -->
-        <div class="hero-section">
-            <span class="status-label" id="event-status">NEXT: IFTAR</span>
-            <div class="countdown-display" id="countdown">00:00:00</div>
-            <div class="progress-bar-container">
-                <div class="progress-fill" id="progress-fill"></div>
+        <!-- Countdown Hero -->
+        <section class="countdown-hero">
+            <span class="countdown-label" id="event-status">ইফতারের বাকি</span>
+            <div class="countdown-timer" id="countdown">00:00:00</div>
+            <div class="progress-track">
+                <div class="progress-bar" id="progress-fill"></div>
             </div>
-        </div>
+        </section>
 
-        <!-- Primary Cards -->
-        <div class="timing-cards">
-            <div class="card sehar">
-                <div class="card-icon"><i data-lucide="sunrise"></i></div>
-                <div class="card-content">
-                    <span class="bn-label">সেহরি (শেষ সময়)</span>
-                    <span class="en-label">SEHAR ENDS</span>
-                    <span class="time-val" id="sehar-time">--:-- AM</span>
+        <!-- Sehar / Iftar Cards -->
+        <section class="time-cards">
+            <div class="time-card">
+                <div class="time-card-icon">
+                    <i data-lucide="sunrise"></i>
+                </div>
+                <div class="time-card-body">
+                    <span class="card-label bn-label">সেহরি শেষ</span>
+                    <span class="card-label en-label">SEHAR ENDS</span>
+                    <span class="card-time" id="sehar-time">--:--</span>
                 </div>
             </div>
-            <div class="card iftar">
-                <div class="card-icon"><i data-lucide="sunset"></i></div>
-                <div class="card-content">
-                    <span class="bn-label">ইফতার (শুরু সময়)</span>
-                    <span class="en-label">IFTAR STARTS</span>
-                    <span class="time-val" id="iftar-time">--:-- PM</span>
+            <div class="time-card">
+                <div class="time-card-icon">
+                    <i data-lucide="sunset"></i>
+                </div>
+                <div class="time-card-body">
+                    <span class="card-label bn-label">ইফতার শুরু</span>
+                    <span class="card-label en-label">IFTAR STARTS</span>
+                    <span class="card-time" id="iftar-time">--:--</span>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Expandable Prayer Times -->
-        <div class="extra-times">
-            <button id="toggle-tray" class="tray-toggle">
-                <span>আজকের নামাজের সময়</span>
-                <span class="en-sub">Today's Prayer Times</span>
+        <!-- All Prayer Times -->
+        <section class="prayer-section">
+            <button id="toggle-tray" class="prayer-toggle-btn">
+                <span class="prayer-toggle-label">আজকের নামাজের সময়</span>
                 <i data-lucide="chevron-down"></i>
             </button>
-            <div class="prayer-grid" id="full-prayer-grid">
-                <!-- Populated by JS -->
+            <div class="prayer-list" id="full-prayer-grid">
+                <!-- JS populates -->
             </div>
-        </div>
-    </div>
+        </section>
 
+    </div>
     <script src="app.js"></script>
 </body>
 

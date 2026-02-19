@@ -1,254 +1,231 @@
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
+    document.body.classList.add('lang-bn');
     initApp();
     setupEventListeners();
     updateDateTime();
     setInterval(updateDateTime, 1000);
 });
 
-let currentLang = 'bn'; // Default to Bengali
+let currentLang = 'bn';
 
-const translations = {
+const i18n = {
     en: {
-        sehar_label: "SEHAR ENDS",
-        iftar_label: "IFTAR STARTS",
-        countdown_sehar: "UNTIL SEHAR",
-        countdown_iftar: "UNTIL IFTAR",
-        countdown_sehar_tomorrow: "UNTIL SEHAR (TOMORROW)",
+        countdown_sehar: 'UNTIL SEHAR',
+        countdown_iftar: 'UNTIL IFTAR',
+        countdown_tomorrow: 'UNTIL SEHAR (TOMORROW)',
         tray_label: "Today's Prayer Times",
-        dhaka: "Dhaka, Bangladesh",
-        location_label: "Location",
-        loading: "Loading...",
-        date_locale: 'en-GB'
+        location: 'Dhaka, Bangladesh',
+        loading: 'Loading...',
+        locale: 'en-GB',
     },
     bn: {
-        sehar_label: "সেহরি (শেষ সময়)",
-        iftar_label: "ইফতার (শুরু সময়)",
-        countdown_sehar: "সেহরির বাকি",
-        countdown_iftar: "ইফতারের বাকি",
-        countdown_sehar_tomorrow: "আগামীকালের সেহরি",
-        tray_label: "আজকের নামাজের সময়",
-        dhaka: "ঢাকা, বাংলাদেশ",
-        location_label: "অবস্থান",
-        loading: "লোড হচ্ছে...",
-        date_locale: 'bn-BD'
-    }
+        countdown_sehar: 'সেহরির বাকি',
+        countdown_iftar: 'ইফতারের বাকি',
+        countdown_tomorrow: 'আগামীকালের সেহরি',
+        tray_label: 'আজকের নামাজের সময়',
+        location: 'ঢাকা, বাংলাদেশ',
+        loading: 'লোড হচ্ছে...',
+        locale: 'bn-BD',
+    },
 };
 
-const prayerNames = {
-    en: ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'],
-    bn: ['ফজর', 'সূর্যোদয়', 'যোহর', 'আসর', 'মাগরিব', 'এশা']
-};
+const prayerKeys = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+const prayerNamesBn = ['ফজর', 'সূর্যোদয়', 'যোহর', 'আসর', 'মাগরিব', 'এশা'];
 
+// ==================== DATE & TIME ====================
 function updateDateTime() {
     const now = new Date();
-    const t = translations[currentLang];
+    const locale = i18n[currentLang].locale;
 
-    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-    document.getElementById('current-date').textContent = now.toLocaleDateString(t.date_locale, options).toUpperCase();
+    document.getElementById('current-date').textContent =
+        now.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
 
-    const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-    document.getElementById('current-time').textContent = now.toLocaleTimeString(t.date_locale, timeOptions);
+    document.getElementById('current-time').textContent =
+        now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
 }
 
+// ==================== EVENT LISTENERS ====================
 function setupEventListeners() {
-    const toggleBtn = document.getElementById('toggle-tray');
-    const tray = document.getElementById('full-prayer-grid');
-    const langBtn = document.getElementById('lang-toggle');
-
-    toggleBtn.addEventListener('click', () => {
-        tray.classList.toggle('active');
-        toggleBtn.classList.toggle('active');
+    document.getElementById('toggle-tray').addEventListener('click', function () {
+        this.classList.toggle('active');
+        document.getElementById('full-prayer-grid').classList.toggle('active');
     });
 
-    langBtn.addEventListener('click', () => {
+    document.getElementById('lang-toggle').addEventListener('click', () => {
         currentLang = currentLang === 'bn' ? 'en' : 'bn';
         document.body.className = `lang-${currentLang}`;
-        updateLanguageUI();
+        applyLanguage();
         updateDateTime();
     });
 }
 
-function updateLanguageUI() {
-    const t = translations[currentLang];
+function applyLanguage() {
+    const t = i18n[currentLang];
 
-    const enBtn = document.querySelector('.lang-en');
-    const bnBtn = document.querySelector('.lang-bn');
-    if (currentLang === 'en') {
-        enBtn.classList.add('active');
-        bnBtn.classList.remove('active');
-    } else {
-        enBtn.classList.remove('active');
-        bnBtn.classList.add('active');
-    }
+    // Toggle button highlights
+    document.querySelector('.lang-en').classList.toggle('active', currentLang === 'en');
+    document.querySelector('.lang-bn').classList.toggle('active', currentLang === 'bn');
 
-    document.querySelector('.tray-toggle span:first-child').textContent = t.tray_label;
-    document.querySelector('.location span').textContent = t.dhaka;
+    // Text updates
+    document.querySelector('.location-text').textContent = t.location;
+    document.querySelector('.prayer-toggle-label').textContent = t.tray_label;
 
-    const cachedData = getCachedTimings();
-    if (cachedData) {
-        const today = new Date();
-        const dayIdx = today.getDate() - 1;
-        populatePrayerGrid(cachedData[dayIdx].timings);
+    // Refresh prayer grid names
+    const cached = getCachedTimings();
+    if (cached) {
+        const dayIdx = new Date().getDate() - 1;
+        if (cached[dayIdx]) renderPrayerGrid(cached[dayIdx].timings);
     }
 }
 
+// ==================== DATA ====================
 async function initApp() {
-    const cachedData = getCachedTimings();
-    if (cachedData) {
-        updateUI(cachedData);
+    const cached = getCachedTimings();
+    if (cached) {
+        render(cached);
     } else {
-        await fetchAndCacheTimings();
+        await fetchTimings();
     }
 }
 
 function getCachedTimings() {
-    const cached = localStorage.getItem('ramadan_timings');
-    if (!cached) return null;
-    const { date, data } = JSON.parse(cached);
-    return date === new Date().toISOString().split('T')[0] ? data : null;
+    const raw = localStorage.getItem('ramadan_timings');
+    if (!raw) return null;
+    const { date, data } = JSON.parse(raw);
+    return date === todayISO() ? data : null;
 }
 
-async function fetchAndCacheTimings() {
-    const statusEl = document.getElementById('event-status');
-    const today = new Date();
-    const city = "Dhaka", country = "Bangladesh";
-    const month = today.getMonth() + 1, year = today.getFullYear();
+function todayISO() {
+    return new Date().toISOString().split('T')[0];
+}
+
+async function fetchTimings() {
+    const now = new Date();
+    const url = `https://api.aladhan.com/v1/calendarByCity/${now.getFullYear()}/${now.getMonth() + 1}?city=Dhaka&country=Bangladesh&method=1`;
 
     try {
-        const response = await fetch(`https://api.aladhan.com/v1/calendarByCity/${year}/${month}?city=${city}&country=${country}&method=1`);
-        const result = await response.json();
-
-        if (result.code === 200) {
-            localStorage.setItem('ramadan_timings', JSON.stringify({
-                date: new Date().toISOString().split('T')[0],
-                data: result.data
-            }));
-            updateUI(result.data);
-        } else {
-            statusEl.textContent = translations[currentLang].loading;
+        const res = await fetch(url);
+        const json = await res.json();
+        if (json.code === 200) {
+            localStorage.setItem('ramadan_timings', JSON.stringify({ date: todayISO(), data: json.data }));
+            render(json.data);
         }
-    } catch (error) {
-        statusEl.textContent = "Offline";
+    } catch {
+        document.getElementById('event-status').textContent = i18n[currentLang].loading;
     }
 }
 
-function updateUI(calendarData) {
-    const today = new Date();
-    const dayIdx = today.getDate() - 1;
-    const todayData = calendarData[dayIdx];
+// ==================== RENDERING ====================
+function render(calendarData) {
+    const dayIdx = new Date().getDate() - 1;
+    const today = calendarData[dayIdx];
+    if (!today) return;
 
-    if (!todayData) return;
-
-    const h = todayData.date.hijri;
+    // Hijri
+    const h = today.date.hijri;
     document.getElementById('hijri-date').textContent = `${h.day} ${h.month.en} ${h.year}`;
 
-    const seharTime = todayData.timings.Fajr.split(' ')[0];
-    const iftarTime = todayData.timings.Maghrib.split(' ')[0];
-    document.getElementById('sehar-time').textContent = formatTime(seharTime);
-    document.getElementById('iftar-time').textContent = formatTime(iftarTime);
+    // Sehar / Iftar
+    document.getElementById('sehar-time').textContent = to12h(today.timings.Fajr);
+    document.getElementById('iftar-time').textContent = to12h(today.timings.Maghrib);
 
-    populatePrayerGrid(todayData.timings);
+    // Prayer grid
+    renderPrayerGrid(today.timings);
+
+    // Countdown
     startCountdown(calendarData);
 }
 
-function populatePrayerGrid(timings) {
+function renderPrayerGrid(timings) {
     const grid = document.getElementById('full-prayer-grid');
-    const enNames = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-    const displayNames = currentLang === 'en' ? enNames : prayerNames.bn;
+    const names = currentLang === 'en' ? prayerKeys : prayerNamesBn;
 
-    grid.innerHTML = enNames.map((name, i) => `
+    grid.innerHTML = prayerKeys.map((key, i) => `
         <div class="p-item">
-            <span class="p-name">${displayNames[i].toUpperCase()}</span>
-            <span class="p-time">${formatTime(timings[name].split(' ')[0])}</span>
+            <span class="p-name">${names[i]}</span>
+            <span class="p-time">${to12h(timings[key])}</span>
         </div>
     `).join('');
 }
 
-function formatTime(time24) {
-    const [hours, minutes] = time24.split(':');
-    let h = parseInt(hours);
-    const period = h >= 12 ? 'PM' : 'AM';
+function to12h(raw) {
+    const [hh, mm] = raw.split(' ')[0].split(':');
+    let h = parseInt(hh);
+    const ampm = h >= 12 ? 'PM' : 'AM';
     h = h % 12 || 12;
-    return `${h}:${minutes} ${period}`;
+    return `${h}:${mm} ${ampm}`;
 }
 
-function startCountdown(calendarData) {
+// ==================== COUNTDOWN ====================
+function startCountdown(cal) {
     const statusEl = document.getElementById('event-status');
-    const countdownEl = document.getElementById('countdown');
-    const progressBar = document.getElementById('progress-fill');
+    const timerEl = document.getElementById('countdown');
+    const barEl = document.getElementById('progress-fill');
 
-    const tick = () => {
+    function tick() {
         const now = new Date();
         const dayIdx = now.getDate() - 1;
-        if (!calendarData[dayIdx]) return;
+        if (!cal[dayIdx]) return;
 
-        const todayTimings = calendarData[dayIdx].timings;
-        const t = translations[currentLang];
+        const t = i18n[currentLang];
+        const timings = cal[dayIdx].timings;
 
-        const [sH, sM] = todayTimings.Fajr.split(' ')[0].split(':').map(Number);
-        const [iH, iM] = todayTimings.Maghrib.split(' ')[0].split(':').map(Number);
+        const sehar = timeToDate(now, timings.Fajr);
+        const iftar = timeToDate(now, timings.Maghrib);
 
-        const seharDate = new Date(now);
-        seharDate.setHours(sH, sM, 0, 0);
+        let target, label, origin;
 
-        const iftarDate = new Date(now);
-        iftarDate.setHours(iH, iM, 0, 0);
-
-        let target, statusText, startTime;
-
-        if (now < seharDate) {
-            target = seharDate;
-            statusText = t.countdown_sehar;
-
-            // Start from previous Iftar
-            let prevIftarDate;
+        if (now < sehar) {
+            target = sehar;
+            label = t.countdown_sehar;
+            // Origin: previous day's Iftar
             if (dayIdx > 0) {
-                const prevTimings = calendarData[dayIdx - 1].timings;
-                const [pIH, pIM] = prevTimings.Maghrib.split(' ')[0].split(':').map(Number);
-                prevIftarDate = new Date(now);
-                prevIftarDate.setDate(prevIftarDate.getDate() - 1);
-                prevIftarDate.setHours(pIH, pIM, 0, 0);
+                const prev = cal[dayIdx - 1].timings;
+                const d = new Date(now);
+                d.setDate(d.getDate() - 1);
+                origin = timeToDate(d, prev.Maghrib);
             } else {
-                // Approximate fallback for 1st of month: 11 hours before Sehar
-                prevIftarDate = new Date(seharDate.getTime() - (11 * 3600000));
+                origin = new Date(sehar.getTime() - 11 * 3600000);
             }
-            startTime = prevIftarDate.getTime();
-        } else if (now < iftarDate) {
-            target = iftarDate;
-            statusText = t.countdown_iftar;
-            startTime = seharDate.getTime();
+        } else if (now < iftar) {
+            target = iftar;
+            label = t.countdown_iftar;
+            origin = sehar;
         } else {
-            statusText = t.countdown_sehar_tomorrow;
-            const nextDay = calendarData[dayIdx + 1];
-            if (nextDay) {
-                const [tsH, tsM] = nextDay.timings.Fajr.split(' ')[0].split(':').map(Number);
-                const tmDate = new Date(now);
-                tmDate.setDate(tmDate.getDate() + 1);
-                tmDate.setHours(tsH, tsM, 0, 0);
-                target = tmDate;
+            label = t.countdown_tomorrow;
+            const next = cal[dayIdx + 1];
+            if (next) {
+                const d = new Date(now);
+                d.setDate(d.getDate() + 1);
+                target = timeToDate(d, next.timings.Fajr);
             } else {
-                // Fallback for end of month
-                target = new Date(now.getTime() + (10 * 3600000));
+                target = new Date(now.getTime() + 10 * 3600000);
             }
-            startTime = iftarDate.getTime();
+            origin = iftar;
         }
 
-        const diff = target - now;
-        const total = target - startTime;
-        const progress = Math.max(0, Math.min(100, (1 - (diff / total)) * 100));
+        const remaining = target - now;
+        const total = target - origin;
+        const pct = Math.max(0, Math.min(100, ((1 - remaining / total) * 100)));
+        barEl.style.width = `${pct}%`;
 
-        progressBar.style.width = `${progress}%`;
+        const sec = Math.max(0, Math.floor(remaining / 1000));
+        const hh = String(Math.floor(sec / 3600)).padStart(2, '0');
+        const mm = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
+        const ss = String(sec % 60).padStart(2, '0');
 
-        const totalSeconds = Math.max(0, Math.floor(diff / 1000));
-        const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-        const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-        const s = String(totalSeconds % 60).padStart(2, '0');
+        statusEl.textContent = label;
+        timerEl.textContent = `${hh}:${mm}:${ss}`;
+    }
 
-        statusEl.textContent = statusText;
-        countdownEl.textContent = `${h}:${m}:${s}`;
-    };
-
-    setInterval(tick, 1000);
     tick();
+    setInterval(tick, 1000);
+}
+
+function timeToDate(base, raw) {
+    const [hh, mm] = raw.split(' ')[0].split(':').map(Number);
+    const d = new Date(base);
+    d.setHours(hh, mm, 0, 0);
+    return d;
 }
