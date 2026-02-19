@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ramadan 2026 | রমজান ২০২৬</title>
     <meta name="description" content="Ramadan Sehar and Iftar timings for Dhaka, Bangladesh.">
+    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+    <link rel="apple-touch-icon" href="assets/icon.svg">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,9 +58,18 @@
         <header class="flex justify-between items-start">
             <!-- Left: Location + Hijri -->
             <div class="flex flex-col gap-2">
-                <div class="flex items-center gap-2 text-white/80 text-xs font-medium">
-                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-gold"></i>
-                    <span class="location-text">ঢাকা, বাংলাদেশ</span>
+                <div class="relative">
+                    <button id="city-trigger"
+                        class="flex items-center gap-2 text-white/80 text-xs font-medium cursor-pointer hover:text-white transition-colors">
+                        <i data-lucide="map-pin" class="w-3.5 h-3.5 text-gold"></i>
+                        <span id="city-label">ঢাকা, বাংলাদেশ</span>
+                        <i data-lucide="chevron-down"
+                            class="w-3 h-3 text-gold/60 city-chevron transition-transform duration-300"></i>
+                    </button>
+                    <div id="city-dropdown"
+                        class="city-dropdown absolute top-full left-0 mt-2 min-w-[200px] bg-black/80 border border-white/10 backdrop-blur-2xl rounded-2xl p-1.5 z-50 opacity-0 invisible translate-y-1 transition-all duration-200">
+                        <!-- JS populates -->
+                    </div>
                 </div>
                 <div class="flex items-center gap-2 text-white/80 text-xs font-medium">
                     <i data-lucide="calendar" class="w-3.5 h-3.5 text-gold"></i>
@@ -103,6 +116,7 @@
                     class="h-full w-0 bg-gold rounded-full shadow-[0_0_12px_#ffd700] transition-[width] duration-1000 ease-linear">
                 </div>
             </div>
+            <div id="ramadan-day" class="hidden text-white/40 text-[0.7rem] font-medium mt-2 tracking-wide"></div>
         </section>
 
         <!-- Sehar / Iftar Cards -->

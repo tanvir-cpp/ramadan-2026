@@ -1,0 +1,17 @@
+{
+    "name": "Ramadan 2026 — রমজান ২০২৬",
+    "short_name": "Ramadan 2026",
+    "description": "Sehar & Iftar timings with live countdown",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#000000",
+    "icons": [
+        {
+            "src": "assets/icon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}

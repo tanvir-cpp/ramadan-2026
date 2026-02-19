@@ -1,13 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
     document.body.classList.add('lang-bn');
+    populateCitySelector();
     initApp();
     setupEventListeners();
     updateDateTime();
     setInterval(updateDateTime, 1000);
+    registerSW();
 });
 
 let currentLang = 'bn';
+let currentCity = localStorage.getItem('selected_city') || 'Dhaka';
+let countdownInterval = null;
+
+const cities = [
+    { name: 'Dhaka', bn: 'ঢাকা' },
+    { name: 'Chittagong', bn: 'চট্টগ্রাম' },
+    { name: 'Sylhet', bn: 'সিলেট' },
+    { name: 'Rajshahi', bn: 'রাজশাহী' },
+    { name: 'Khulna', bn: 'খুলনা' },
+    { name: 'Barishal', bn: 'বরিশাল' },
+    { name: 'Rangpur', bn: 'রংপুর' },
+    { name: 'Comilla', bn: 'কুমিল্লা' },
+    { name: 'Mymensingh', bn: 'ময়মনসিংহ' },
+    { name: 'Gazipur', bn: 'গাজীপুর' },
+];
 
 const i18n = {
     en: {
@@ -15,20 +32,26 @@ const i18n = {
         countdown_iftar: 'UNTIL IFTAR',
         countdown_tomorrow: 'UNTIL SEHAR (TOMORROW)',
         tray_label: "Today's Prayer Times",
-        location: 'Dhaka, Bangladesh',
         loading: 'Loading...',
         locale: 'en-GB',
+        country: 'Bangladesh',
+        ramadan_day: (d) => `Day ${d} of 30`,
     },
     bn: {
         countdown_sehar: 'সেহরির বাকি',
         countdown_iftar: 'ইফতারের বাকি',
         countdown_tomorrow: 'আগামীকালের সেহরি',
         tray_label: 'আজকের নামাজের সময়',
-        location: 'ঢাকা, বাংলাদেশ',
         loading: 'লোড হচ্ছে...',
         locale: 'bn-BD',
+        country: 'বাংলাদেশ',
+        ramadan_day: (d) => `দিন ${toBnNum(d)} / ৩০`,
     },
 };
+
+function toBnNum(n) {
+    return String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
+}
 
 const prayerKeys = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 const prayerNamesBn = ['ফজর', 'সূর্যোদয়', 'যোহর', 'আসর', 'মাগরিব', 'এশা'];
@@ -43,6 +66,26 @@ function updateDateTime() {
 
     document.getElementById('current-time').textContent =
         now.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+}
+
+// ==================== CITY SELECTOR ====================
+function populateCitySelector() {
+    const dropdown = document.getElementById('city-dropdown');
+    const label = document.getElementById('city-label');
+    const t = i18n[currentLang];
+    const city = cities.find((c) => c.name === currentCity) || cities[0];
+
+    // Update trigger label
+    label.textContent = currentLang === 'bn' ? `${city.bn}, ${t.country}` : `${city.name}, ${t.country}`;
+
+    // Build options
+    dropdown.innerHTML = cities
+        .map((c) => {
+            const name = currentLang === 'bn' ? c.bn : c.name;
+            const sel = c.name === currentCity ? 'selected' : '';
+            return `<div class="city-option ${sel}" data-city="${c.name}">${name}</div>`;
+        })
+        .join('');
 }
 
 // ==================== EVENT LISTENERS ====================
@@ -69,6 +112,35 @@ function setupEventListeners() {
     });
 
     document.addEventListener('fullscreenchange', updateFullscreenIcon);
+
+    // City dropdown toggle
+    const cityTrigger = document.getElementById('city-trigger');
+    const cityDropdown = document.getElementById('city-dropdown');
+    const cityChevron = cityTrigger.querySelector('.city-chevron');
+
+    cityTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = cityDropdown.classList.toggle('active');
+        cityChevron.classList.toggle('active', isOpen);
+    });
+
+    // City option selection
+    cityDropdown.addEventListener('click', (e) => {
+        const opt = e.target.closest('.city-option');
+        if (!opt) return;
+        currentCity = opt.dataset.city;
+        localStorage.setItem('selected_city', currentCity);
+        cityDropdown.classList.remove('active');
+        cityChevron.classList.remove('active');
+        populateCitySelector();
+        initApp();
+    });
+
+    // Close dropdown on outside click
+    document.addEventListener('click', () => {
+        cityDropdown.classList.remove('active');
+        cityChevron.classList.remove('active');
+    });
 }
 
 function updateFullscreenIcon() {
@@ -85,14 +157,19 @@ function applyLanguage() {
     document.querySelector('.lang-bn').classList.toggle('active', currentLang === 'bn');
 
     // Text updates
-    document.querySelector('.location-text').textContent = t.location;
     document.querySelector('.prayer-toggle-label').textContent = t.tray_label;
 
-    // Refresh prayer grid
+    // Update city selector options
+    populateCitySelector();
+
+    // Refresh prayer grid + day counter
     const cached = getCachedTimings();
     if (cached) {
         const dayIdx = new Date().getDate() - 1;
-        if (cached[dayIdx]) renderPrayerGrid(cached[dayIdx].timings);
+        if (cached[dayIdx]) {
+            renderPrayerGrid(cached[dayIdx].timings);
+            renderRamadanDay(cached[dayIdx]);
+        }
     }
 }
 
@@ -107,10 +184,10 @@ async function initApp() {
 }
 
 function getCachedTimings() {
-    const raw = localStorage.getItem('ramadan_timings');
+    const key = `ramadan_${currentCity}_${todayISO()}`;
+    const raw = localStorage.getItem(key);
     if (!raw) return null;
-    const { date, data } = JSON.parse(raw);
-    return date === todayISO() ? data : null;
+    return JSON.parse(raw);
 }
 
 function todayISO() {
@@ -119,13 +196,14 @@ function todayISO() {
 
 async function fetchTimings() {
     const now = new Date();
-    const url = `https://api.aladhan.com/v1/calendarByCity/${now.getFullYear()}/${now.getMonth() + 1}?city=Dhaka&country=Bangladesh&method=1`;
+    const url = `https://api.aladhan.com/v1/calendarByCity/${now.getFullYear()}/${now.getMonth() + 1}?city=${currentCity}&country=Bangladesh&method=1`;
 
     try {
         const res = await fetch(url);
         const json = await res.json();
         if (json.code === 200) {
-            localStorage.setItem('ramadan_timings', JSON.stringify({ date: todayISO(), data: json.data }));
+            const key = `ramadan_${currentCity}_${todayISO()}`;
+            localStorage.setItem(key, JSON.stringify(json.data));
             render(json.data);
         }
     } catch {
@@ -147,6 +225,9 @@ function render(calendarData) {
     document.getElementById('sehar-time').textContent = to12h(today.timings.Fajr);
     document.getElementById('iftar-time').textContent = to12h(today.timings.Maghrib);
 
+    // Ramadan day counter
+    renderRamadanDay(today);
+
     // Prayer grid
     renderPrayerGrid(today.timings);
 
@@ -154,16 +235,34 @@ function render(calendarData) {
     startCountdown(calendarData);
 }
 
+function renderRamadanDay(today) {
+    const el = document.getElementById('ramadan-day');
+    const h = today.date.hijri;
+    const monthNum = parseInt(h.month.number);
+    const day = parseInt(h.day);
+
+    if (monthNum === 9) {
+        el.textContent = i18n[currentLang].ramadan_day(day);
+        el.classList.remove('hidden');
+    } else {
+        el.classList.add('hidden');
+    }
+}
+
 function renderPrayerGrid(timings) {
     const grid = document.getElementById('full-prayer-grid');
     const names = currentLang === 'en' ? prayerKeys : prayerNamesBn;
 
-    grid.innerHTML = prayerKeys.map((key, i) => `
+    grid.innerHTML = prayerKeys
+        .map(
+            (key, i) => `
         <div class="p-item">
             <span class="p-name">${names[i]}</span>
             <span class="p-time">${to12h(timings[key])}</span>
         </div>
-    `).join('');
+    `
+        )
+        .join('');
 }
 
 function to12h(raw) {
@@ -176,6 +275,8 @@ function to12h(raw) {
 
 // ==================== COUNTDOWN ====================
 function startCountdown(cal) {
+    if (countdownInterval) clearInterval(countdownInterval);
+
     const statusEl = document.getElementById('event-status');
     const timerEl = document.getElementById('countdown');
     const barEl = document.getElementById('progress-fill');
@@ -223,7 +324,7 @@ function startCountdown(cal) {
 
         const remaining = target - now;
         const total = target - origin;
-        const pct = Math.max(0, Math.min(100, ((1 - remaining / total) * 100)));
+        const pct = Math.max(0, Math.min(100, (1 - remaining / total) * 100));
         barEl.style.width = `${pct}%`;
 
         const sec = Math.max(0, Math.floor(remaining / 1000));
@@ -236,7 +337,7 @@ function startCountdown(cal) {
     }
 
     tick();
-    setInterval(tick, 1000);
+    countdownInterval = setInterval(tick, 1000);
 }
 
 function timeToDate(base, raw) {
@@ -244,4 +345,11 @@ function timeToDate(base, raw) {
     const d = new Date(base);
     d.setHours(hh, mm, 0, 0);
     return d;
+}
+
+// ==================== PWA ====================
+function registerSW() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => { });
+    }
 }

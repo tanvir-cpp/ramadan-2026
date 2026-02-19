@@ -58,6 +58,56 @@ body.lang-bn .en-label {
     color: #fff;
 }
 
+/* City dropdown */
+.city-dropdown.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.city-chevron.active {
+    transform: rotate(180deg);
+}
+
+.city-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.55);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.city-option:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.city-option.selected {
+    color: #ffd700;
+    background: rgba(255, 215, 0, 0.08);
+}
+
+.city-option.selected::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #ffd700;
+    flex-shrink: 0;
+}
+
+.city-option:not(.selected)::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    flex-shrink: 0;
+}
+
 /* Small phone adjustments */
 @media (max-width: 380px) {
     #countdown {
