@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramadan Timings 2026 | Bangladesh</title>
+    <meta name="description" content="Sehar and Iftar timings for Ramadan 2026 in Dhaka, Bangladesh.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@500;600&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="timer-card">
+        <div class="timer-header">
+            <i data-lucide="moon" class="ramadan-icon"></i>
+            <h3>Ramadan 2026</h3>
+            <div class="header-meta">
+                <span id="current-location">Dhaka, Bangladesh</span>
+                <span class="dot">•</span>
+                <span id="hijri-date">-- Ramadan ----</span>
+            </div>
+        </div>
+
+        <div class="timer-grid">
+            <div class="timer-item" id="sehar">
+                <span class="label">SEHAR</span>
+                <span class="time" id="sehar-time">--:-- AM</span>
+            </div>
+            <div class="timer-divider"></div>
+            <div class="timer-item" id="iftar">
+                <span class="label">IFTAR</span>
+                <span class="time" id="iftar-time">--:-- PM</span>
+            </div>
+        </div>
+
+        <div class="next-event">
+            <span id="event-status">Loading...</span>
+            <div id="countdown">00:00:00</div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

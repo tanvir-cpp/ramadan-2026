@@ -1,0 +1,194 @@
+:root {
+    --bg-color: #000;
+    --text-color: #fff;
+    --primary-font: 'Outfit', sans-serif;
+    --secondary-font: 'Inter', sans-serif;
+    --accent-gold: #ffd700;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--secondary-font);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('assets/hero-background.jpg');
+    background-size: cover;
+    background-position: center bottom;
+    z-index: -1;
+    filter: brightness(0.7);
+}
+
+.timer-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-radius: 40px;
+    padding: 3.5rem 3rem;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.02);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle inner glow animation */
+.timer-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.timer-header {
+    margin-bottom: 3rem;
+}
+
+.ramadan-icon {
+    color: var(--accent-gold);
+    width: 40px;
+    height: 40px;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+}
+
+.timer-header h3 {
+    font-family: var(--primary-font);
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.timer-header .header-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.dot {
+    opacity: 0.3;
+}
+
+
+.timer-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3.5rem;
+}
+
+.timer-item {
+    flex: 1;
+}
+
+.timer-item .label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.3);
+    letter-spacing: 2.5px;
+    display: block;
+    margin-bottom: 0.75rem;
+}
+
+.timer-item .time {
+    font-family: var(--primary-font);
+    font-size: 2.25rem;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.timer-divider {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.1), transparent);
+    margin: 0 2rem;
+}
+
+.next-event {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 24px;
+    padding: 1.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    transition: transform 0.3s;
+}
+
+.next-event:hover {
+    transform: translateY(-2px);
+}
+
+.next-event #event-status {
+    display: block;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+.next-event #countdown {
+    font-family: var(--secondary-font);
+    font-size: 2.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #fff;
+}
+
+@media (max-width: 520px) {
+    .timer-card {
+        padding: 2.5rem 1.75rem;
+        margin: 1.5rem;
+        border-radius: 30px;
+    }
+
+    .timer-header h3 {
+        font-size: 1.5rem;
+    }
+
+    .timer-header .header-meta {
+        font-size: 0.7rem;
+    }
+
+    .timer-item .time {
+        font-size: 1.75rem;
+    }
+
+    .next-event #countdown {
+        font-size: 2rem;
+    }
+
+    .timer-divider {
+        margin: 0 1rem;
+    }
+}
