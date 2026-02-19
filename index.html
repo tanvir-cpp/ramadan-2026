@@ -1,46 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ramadan Timings 2026 | Bangladesh</title>
-    <meta name="description" content="Sehar and Iftar timings for Ramadan 2026 in Dhaka, Bangladesh.">
+    <title>Ramadan 2026 | রমজান ২০২৬</title>
+    <meta name="description" content="Ramadan Sehar and Iftar timings for Bangladesh.">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@500;600&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&family=Noto+Sans+Bengali:wght@400;600;700&display=swap"
         rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
-    <div class="timer-card">
-        <div class="timer-header">
-            <i data-lucide="moon" class="ramadan-icon"></i>
-            <h3>Ramadan 2026</h3>
-            <div class="header-meta">
-                <span id="current-location">Dhaka, Bangladesh</span>
-                <span class="dot">•</span>
-                <span id="hijri-date">-- Ramadan ----</span>
+    <div class="app-container">
+        <!-- Top Meta -->
+        <div class="top-meta">
+            <div class="location">
+                <i data-lucide="map-pin"></i>
+                <span>Dhaka, Bangladesh</span>
+            </div>
+            <div class="hijri">
+                <i data-lucide="calendar"></i>
+                <span id="hijri-date">Loading...</span>
             </div>
         </div>
 
-        <div class="timer-grid">
-            <div class="timer-item" id="sehar">
-                <span class="label">SEHAR</span>
-                <span class="time" id="sehar-time">--:-- AM</span>
-            </div>
-            <div class="timer-divider"></div>
-            <div class="timer-item" id="iftar">
-                <span class="label">IFTAR</span>
-                <span class="time" id="iftar-time">--:-- PM</span>
+        <!-- Hero Countdown -->
+        <div class="hero-section">
+            <span class="status-label" id="event-status">NEXT: IFTAR</span>
+            <div class="countdown-display" id="countdown">00:00:00</div>
+            <div class="progress-bar-container">
+                <div class="progress-fill" id="progress-fill"></div>
             </div>
         </div>
 
-        <div class="next-event">
-            <span id="event-status">Loading...</span>
-            <div id="countdown">00:00:00</div>
+        <!-- Primary Cards -->
+        <div class="timing-cards">
+            <div class="card sehar">
+                <div class="card-icon"><i data-lucide="sunrise"></i></div>
+                <div class="card-content">
+                    <span class="bn-label">সেহরি (শেষ সময়)</span>
+                    <span class="en-label">SEHAR ENDS</span>
+                    <span class="time-val" id="sehar-time">--:-- AM</span>
+                </div>
+            </div>
+            <div class="card iftar">
+                <div class="card-icon"><i data-lucide="sunset"></i></div>
+                <div class="card-content">
+                    <span class="bn-label">ইফতার (শুরু সময়)</span>
+                    <span class="en-label">IFTAR STARTS</span>
+                    <span class="time-val" id="iftar-time">--:-- PM</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expandable Prayer Times -->
+        <div class="extra-times">
+            <button id="toggle-tray" class="tray-toggle">
+                <span>আজকের নামাজের সময়</span>
+                <span class="en-sub">Today's Prayer Times</span>
+                <i data-lucide="chevron-down"></i>
+            </button>
+            <div class="prayer-grid" id="full-prayer-grid">
+                <!-- Populated by JS -->
+            </div>
         </div>
     </div>
 
