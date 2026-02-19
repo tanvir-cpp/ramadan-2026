@@ -1,117 +1,56 @@
-# 🌙 Ramadan 2026 — রমজান ২০২৬
+# Ramadan 2026 🌙
 
-A beautiful, mobile-first static web app that displays **Sehar & Iftar timings**, a **live countdown**, and **daily prayer times** for Dhaka, Bangladesh during Ramadan 2026.
+Static single-page app showing Sehar & Iftar timings with a live countdown for Dhaka, Bangladesh.
 
-> **Live & lightweight** — no build tools, no frameworks, just open `index.html` and go.
+No frameworks, no build step — just open `index.html`.
 
----
+![HTML](https://img.shields.io/badge/HTML-E34F26?style=flat&logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
+![JS](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
 
-## ✨ Features
+## What it does
 
-| Feature | Description |
-| --- | --- |
-| ⏳ **Live Countdown** | Real-time countdown to the next Sehar or Iftar with a glowing progress bar |
-| 🕌 **Prayer Times** | Expandable tray showing all six daily prayer times (Fajr → Isha) |
-| 🌐 **Bilingual** | Toggle between **বাংলা** and **English** with a single tap |
-| 📅 **Hijri Date** | Automatically displays the current Islamic (Hijri) date |
-| 🕐 **Live Clock** | Shows the current local date and time, updated every second |
-| 📱 **Mobile-First** | Designed for phones with a max-width card layout and small-screen breakpoints |
-| 💾 **Offline Cache** | Prayer data is cached in `localStorage` — works after the first load without extra API calls |
+- Counts down to the next Sehar or Iftar in real time
+- Shows today's six prayer times (Fajr through Isha) in an expandable tray
+- Switches between Bengali and English with one tap
+- Displays the Hijri date and a live clock
+- Caches prayer data in `localStorage` so it works offline after the first load
+- Fullscreen toggle for a clean, immersive view
 
----
+## How it works
 
-## 🛠️ Tech Stack
+Prayer times come from the [Aladhan API](https://aladhan.com/prayer-times-api) (Method 1 — University of Islamic Sciences, Karachi). The app fetches the full month's calendar for Dhaka once, caches it for the day, and handles the rest client-side — countdown math, progress bar, language switching, time formatting.
 
-- **HTML5** — Semantic markup with `lang="bn"` for accessibility
-- **Tailwind CSS** (CDN) — Utility-first styling with custom `gold` palette and font families
-- **Vanilla JavaScript** — Zero dependencies; handles data fetching, rendering, countdown logic, and i18n
-- **Lucide Icons** (CDN) — Clean, consistent SVG icons (`map-pin`, `calendar`, `moon-star`, `utensils`, `chevron-down`)
-- **Google Fonts** — *Inter*, *Outfit*, and *Noto Sans Bengali*
-
----
-
-## 📂 Project Structure
-
-```text
-static_hero/
-├── index.html          # Main HTML — layout, Tailwind config, CDN links
-├── style.css           # Custom CSS for language toggling, prayer grid, animations
-├── app.js              # Core logic — API fetch, countdown, i18n, rendering
-├── assets/
-│   └── hero-background.jpg   # Full-screen background image
-└── README.md
-```
-
----
-
-## 🔌 API
-
-Prayer timings are fetched from the **[Aladhan API](https://aladhan.com/prayer-times-api)**:
-
-```text
-GET https://api.aladhan.com/v1/calendarByCity/{year}/{month}
-    ?city=Dhaka
-    &country=Bangladesh
-    &method=1
-```
-
-- **Method 1** — University of Islamic Sciences, Karachi
-- Response includes Hijri date, all prayer times, and sunrise/sunset
-- Data is cached in `localStorage` for the current day to minimize network requests
-
----
-
-## 🚀 Getting Started
-
-### 1. Clone the repository
+## Running locally
 
 ```bash
 git clone https://github.com/tanvir-cpp/ramadan-2026.git
 cd ramadan-2026
 ```
 
-### 2. Open in a browser
-
-Simply open `index.html` in any modern browser — no server required.
+Open `index.html` directly, or serve it:
 
 ```bash
-# Or use a local server for best results:
 npx serve .
 ```
 
-### 3. That's it
+## Files
 
-The app will automatically fetch today's prayer timings for Dhaka and start the countdown.
+```text
+├── index.html      # layout + Tailwind config
+├── style.css       # custom styles (lang toggle, prayer grid, animations)
+├── app.js          # data fetching, countdown, i18n, rendering
+└── assets/
+    └── hero-background.jpg
+```
 
----
+## Built with
 
-## 🌍 Localization
+- **Tailwind CSS** (CDN) — styling and layout
+- **Lucide Icons** — map-pin, calendar, moon-star, utensils, etc.
+- **Google Fonts** — Inter, Outfit, Noto Sans Bengali
+- **Aladhan API** — prayer time data
 
-The app ships with full **Bengali** and **English** support. Tap the language pill in the top-right corner to switch.
+## License
 
-| Key | English | বাংলা |
-| --- | --- | --- |
-| Countdown (Sehar) | UNTIL SEHAR | সেহরির বাকি |
-| Countdown (Iftar) | UNTIL IFTAR | ইফতারের বাকি |
-| Location | Dhaka, Bangladesh | ঢাকা, বাংলাদেশ |
-| Prayer tray | Today's Prayer Times | আজকের নামাজের সময় |
-
----
-
-## 🎨 Design Highlights
-
-- **Glassmorphism cards** — `backdrop-blur-xl` with subtle white borders
-- **Gold accent system** — `#ffd700` used for icons, active states, and the progress bar glow
-- **Dark cinematic background** — dimmed and saturated hero image for readability
-- **Micro-animations** — hover lifts on cards, smooth chevron rotation, progress bar glow
-
----
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
-
-**রমজান মোবারক! 🌙**
-*May this Ramadan bring peace and blessings.*
+[MIT](LICENSE)
