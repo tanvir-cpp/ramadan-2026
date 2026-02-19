@@ -1,0 +1,19 @@
+{
+  "name": "ramadan-2026",
+  "version": "1.0.0",
+  "description": "Live Sehar & Iftar countdown with a full 30-day calendar — built for Bangladesh.",
+  "private": true,
+  "scripts": {
+    "build": "tailwindcss -i css/input.css -o css/style.css --minify",
+    "watch": "tailwindcss -i css/input.css -o css/style.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tanvir-cpp/ramadan-2026.git"
+  },
+  "author": "Tanvir Rahman",
+  "license": "MIT",
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

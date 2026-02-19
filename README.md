@@ -2,7 +2,7 @@
 
 Live Sehar & Iftar countdown with a full 30-day calendar — built for Bangladesh.
 
-No frameworks, no build step — just open `index.html`.
+Tailwind is compiled at build time, so the deployed site is pure static HTML/CSS/JS.
 
 ![HTML](https://img.shields.io/badge/HTML-E34F26?style=flat&logo=html5&logoColor=white)
 ![CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
@@ -32,6 +32,8 @@ The 30-day calendar fetches both February and March data, filters for Hijri mont
 ```bash
 git clone https://github.com/tanvir-cpp/ramadan-2026.git
 cd ramadan-2026
+npm install
+npm run build
 ```
 
 Open `index.html` directly, or serve it:
@@ -40,22 +42,27 @@ Open `index.html` directly, or serve it:
 npx serve .
 ```
 
+During development, run `npm run watch` to auto-rebuild CSS on any change.
+
 ## Project structure
 
 ```text
-├── index.html           # Main page — countdown, cards, prayer tray
-├── calendar.html        # 30-day Ramadan calendar
-├── manifest.json        # PWA manifest
-├── sw.js                # Service worker (offline caching)
+├── index.html             # Main page — countdown, cards, prayer tray
+├── calendar.html          # 30-day Ramadan calendar
+├── manifest.json          # PWA manifest
+├── sw.js                  # Service worker (offline caching)
+├── tailwind.config.js     # Tailwind theme (colors, fonts)
+├── package.json           # Build scripts
 ├── css/
-│   └── style.css        # Custom styles (lang toggle, dropdowns, calendar cards)
+│   ├── input.css          # Source CSS (Tailwind directives + custom)
+│   └── style.css          # Built output (minified)
 ├── js/
-│   ├── shared.js        # Shared data — cities, utilities, helpers
-│   ├── app.js           # Main page logic — countdown, API, rendering
-│   └── calendar.js      # Calendar page logic — fetch, render, scroll
+│   ├── shared.js          # Shared data — cities, utilities, helpers
+│   ├── app.js             # Main page logic — countdown, API, rendering
+│   └── calendar.js        # Calendar page logic — fetch, render, scroll
 └── assets/
-    ├── hero-background.jpg
-    └── icon.svg         # PWA icon (crescent moon)
+    ├── hero-bg.jpg         # Compressed background (243 KB)
+    └── icon.svg            # PWA icon (crescent moon)
 ```
 
 ## Built with

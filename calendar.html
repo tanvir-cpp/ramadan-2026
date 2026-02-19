@@ -13,10 +13,9 @@
     <!-- Preconnect to CDNs -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://unpkg.com">
 
-    <!-- Preload critical background image -->
+    <!-- Preload hero image -->
     <link rel="preload" as="image" href="assets/hero-bg.jpg" fetchpriority="high">
 
     <!-- Fonts -->
@@ -24,30 +23,10 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&family=Noto+Sans+Bengali:wght@400;600;700&display=swap"
         rel="stylesheet">
 
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        gold: '#ffd700',
-                        'gold-dim': 'rgba(255, 215, 0, 0.15)',
-                    },
-                    fontFamily: {
-                        display: ['Outfit', 'sans-serif'],
-                        body: ['Inter', 'sans-serif'],
-                        bangla: ['Noto Sans Bengali', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-
     <!-- Lucide Icons (deferred) -->
     <script src="https://unpkg.com/lucide@latest" defer></script>
 
-    <!-- Shared Styles -->
+    <!-- Built Tailwind + Custom Styles -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 
