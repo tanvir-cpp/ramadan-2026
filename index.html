@@ -66,12 +66,13 @@
 
             <!-- Right: Lang Toggle + Clock -->
             <div class="flex flex-col items-end gap-2">
-                <button id="lang-toggle"
-                    class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-2.5 py-1 cursor-pointer hover:bg-white/10 transition-colors">
-                    <span class="lang-en text-[0.65rem] font-bold text-white/30 transition-colors">EN</span>
-                    <span class="w-px h-2.5 bg-white/10"></span>
-                    <span class="lang-bn active text-[0.65rem] font-bold text-gold transition-colors">বাংলা</span>
-                </button>
+                <div id="lang-toggle"
+                    class="flex items-center bg-white/5 border border-white/10 rounded-full p-0.5 cursor-pointer hover:border-white/20 transition-all">
+                    <span
+                        class="lang-en text-[0.65rem] font-bold px-3 py-1 rounded-full transition-all duration-300 text-white/40">EN</span>
+                    <span
+                        class="lang-bn active text-[0.65rem] font-bold px-3 py-1 rounded-full transition-all duration-300 bg-gold/20 text-gold">বাংলা</span>
+                </div>
                 <div class="flex items-center gap-1.5 text-white/70 text-[0.72rem] font-medium">
                     <span id="current-date">---</span>
                     <span class="opacity-30">•</span>
