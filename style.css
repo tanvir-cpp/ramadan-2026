@@ -55,15 +55,35 @@ body::before {
 .top-meta {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
     font-size: 0.75rem;
     color: rgba(255, 255, 255, 0.5);
     letter-spacing: 0.5px;
 }
 
-.top-meta div {
+.left-meta,
+.right-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.right-meta {
+    text-align: right;
+    align-items: flex-end;
+}
+
+.location,
+.hijri,
+.current-datetime {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.dot {
+    opacity: 0.3;
+    margin: 0 0.25rem;
 }
 
 .top-meta i {

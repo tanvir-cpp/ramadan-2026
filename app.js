@@ -2,7 +2,21 @@ document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
     initApp();
     setupEventListeners();
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
 });
+
+function updateDateTime() {
+    const now = new Date();
+
+    // Format Date: e.g., "Thursday, 19 Feb 2026"
+    const options = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
+    document.getElementById('current-date').textContent = now.toLocaleDateString('en-GB', options).toUpperCase();
+
+    // Format Time: e.g., "06:15:26 PM"
+    const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+    document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', timeOptions);
+}
 
 function setupEventListeners() {
     const toggleBtn = document.getElementById('toggle-tray');
