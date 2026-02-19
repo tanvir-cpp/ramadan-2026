@@ -1,10 +1,14 @@
-const CACHE = 'ramadan-2026-v1';
+const CACHE = 'ramadan-2026-v2';
 const STATIC = [
     'index.html',
-    'style.css',
-    'app.js',
+    'calendar.html',
+    'css/style.css',
+    'js/shared.js',
+    'js/app.js',
+    'js/calendar.js',
     'manifest.json',
     'assets/hero-background.jpg',
+    'assets/icon.svg',
 ];
 
 self.addEventListener('install', (e) => {

@@ -1,6 +1,13 @@
+/* ==========================================
+   Main page logic — app.js
+   ========================================== */
+
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
-    document.body.classList.add('lang-bn');
+    currentLang = getSavedLang();
+    currentCity = getSavedCity();
+    document.body.classList.add(`lang-${currentLang}`);
+    applyLanguage();
     populateCitySelector();
     initApp();
     setupEventListeners();
@@ -10,21 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 let currentLang = 'bn';
-let currentCity = localStorage.getItem('selected_city') || 'Dhaka';
+let currentCity = 'Dhaka';
 let countdownInterval = null;
-
-const cities = [
-    { name: 'Dhaka', bn: 'ঢাকা' },
-    { name: 'Chittagong', bn: 'চট্টগ্রাম' },
-    { name: 'Sylhet', bn: 'সিলেট' },
-    { name: 'Rajshahi', bn: 'রাজশাহী' },
-    { name: 'Khulna', bn: 'খুলনা' },
-    { name: 'Barishal', bn: 'বরিশাল' },
-    { name: 'Rangpur', bn: 'রংপুর' },
-    { name: 'Comilla', bn: 'কুমিল্লা' },
-    { name: 'Mymensingh', bn: 'ময়মনসিংহ' },
-    { name: 'Gazipur', bn: 'গাজীপুর' },
-];
 
 const i18n = {
     en: {
@@ -49,10 +43,6 @@ const i18n = {
     },
 };
 
-function toBnNum(n) {
-    return String(n).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
-}
-
 const prayerKeys = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 const prayerNamesBn = ['ফজর', 'সূর্যোদয়', 'যোহর', 'আসর', 'মাগরিব', 'এশা'];
 
@@ -75,10 +65,8 @@ function populateCitySelector() {
     const t = i18n[currentLang];
     const city = cities.find((c) => c.name === currentCity) || cities[0];
 
-    // Update trigger label
     label.textContent = currentLang === 'bn' ? `${city.bn}, ${t.country}` : `${city.name}, ${t.country}`;
 
-    // Build options
     dropdown.innerHTML = cities
         .map((c) => {
             const name = currentLang === 'bn' ? c.bn : c.name;
@@ -90,13 +78,16 @@ function populateCitySelector() {
 
 // ==================== EVENT LISTENERS ====================
 function setupEventListeners() {
+    // Prayer tray toggle
     document.getElementById('toggle-tray').addEventListener('click', function () {
         this.classList.toggle('active');
         document.getElementById('full-prayer-grid').classList.toggle('active');
     });
 
+    // Language toggle
     document.getElementById('lang-toggle').addEventListener('click', () => {
         currentLang = currentLang === 'bn' ? 'en' : 'bn';
+        localStorage.setItem('selected_lang', currentLang);
         document.body.className = `bg-black text-white font-body h-screen w-screen flex justify-center items-center overflow-hidden lang-${currentLang}`;
         applyLanguage();
         updateDateTime();
@@ -263,14 +254,6 @@ function renderPrayerGrid(timings) {
     `
         )
         .join('');
-}
-
-function to12h(raw) {
-    const [hh, mm] = raw.split(' ')[0].split(':');
-    let h = parseInt(hh);
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    h = h % 12 || 12;
-    return `${h}:${mm} ${ampm}`;
 }
 
 // ==================== COUNTDOWN ====================
