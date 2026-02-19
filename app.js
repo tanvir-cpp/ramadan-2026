@@ -54,7 +54,7 @@ function setupEventListeners() {
 
     document.getElementById('lang-toggle').addEventListener('click', () => {
         currentLang = currentLang === 'bn' ? 'en' : 'bn';
-        document.body.className = `lang-${currentLang}`;
+        document.body.className = `bg-black text-white font-body h-screen w-screen flex justify-center items-center overflow-hidden lang-${currentLang}`;
         applyLanguage();
         updateDateTime();
     });
@@ -71,7 +71,7 @@ function applyLanguage() {
     document.querySelector('.location-text').textContent = t.location;
     document.querySelector('.prayer-toggle-label').textContent = t.tray_label;
 
-    // Refresh prayer grid names
+    // Refresh prayer grid
     const cached = getCachedTimings();
     if (cached) {
         const dayIdx = new Date().getDate() - 1;
@@ -179,7 +179,6 @@ function startCountdown(cal) {
         if (now < sehar) {
             target = sehar;
             label = t.countdown_sehar;
-            // Origin: previous day's Iftar
             if (dayIdx > 0) {
                 const prev = cal[dayIdx - 1].timings;
                 const d = new Date(now);

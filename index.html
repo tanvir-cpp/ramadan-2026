@@ -6,89 +6,144 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ramadan 2026 | রমজান ২০২৬</title>
     <meta name="description" content="Ramadan Sehar and Iftar timings for Dhaka, Bangladesh.">
-    <link rel="stylesheet" href="style.css">
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&family=Noto+Sans+Bengali:wght@400;600;700&display=swap"
         rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: '#ffd700',
+                        'gold-dim': 'rgba(255, 215, 0, 0.15)',
+                    },
+                    fontFamily: {
+                        display: ['Outfit', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                        bangla: ['Noto Sans Bengali', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Custom Styles (things Tailwind can't do) -->
+    <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
-    <div class="app-container">
+<body class="bg-black text-white font-body h-screen w-screen flex justify-center items-center overflow-hidden">
 
-        <!-- Header Row -->
-        <header class="header">
-            <div class="header-left">
-                <div class="header-row">
-                    <i data-lucide="map-pin"></i>
+    <!-- Background Image -->
+    <div class="fixed inset-0 -z-10 bg-cover bg-center brightness-[0.55] saturate-[1.2]"
+        style="background-image: url('assets/hero-background.jpg');"></div>
+
+    <!-- App Container -->
+    <div class="w-full max-w-[420px] px-5 py-6 flex flex-col gap-7">
+
+        <!-- Header -->
+        <header class="flex justify-between items-start">
+            <!-- Left: Location + Hijri -->
+            <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-2 text-white/80 text-xs font-medium">
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-gold"></i>
                     <span class="location-text">ঢাকা, বাংলাদেশ</span>
                 </div>
-                <div class="header-row">
-                    <i data-lucide="calendar"></i>
+                <div class="flex items-center gap-2 text-white/80 text-xs font-medium">
+                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-gold"></i>
                     <span id="hijri-date">Loading...</span>
                 </div>
             </div>
-            <div class="header-right">
-                <button id="lang-toggle" class="lang-btn">
-                    <span class="lang-en">EN</span>
-                    <span class="lang-divider"></span>
-                    <span class="lang-bn active">বাংলা</span>
+
+            <!-- Right: Lang Toggle + Clock -->
+            <div class="flex flex-col items-end gap-2">
+                <button id="lang-toggle"
+                    class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-2.5 py-1 cursor-pointer hover:bg-white/10 transition-colors">
+                    <span class="lang-en text-[0.65rem] font-bold text-white/30 transition-colors">EN</span>
+                    <span class="w-px h-2.5 bg-white/10"></span>
+                    <span class="lang-bn active text-[0.65rem] font-bold text-gold transition-colors">বাংলা</span>
                 </button>
-                <div class="live-clock">
+                <div class="flex items-center gap-1.5 text-white/70 text-[0.72rem] font-medium">
                     <span id="current-date">---</span>
-                    <span class="separator">•</span>
+                    <span class="opacity-30">•</span>
                     <span id="current-time">--:--:--</span>
                 </div>
             </div>
         </header>
 
         <!-- Countdown Hero -->
-        <section class="countdown-hero">
-            <span class="countdown-label" id="event-status">ইফতারের বাকি</span>
-            <div class="countdown-timer" id="countdown">00:00:00</div>
-            <div class="progress-track">
-                <div class="progress-bar" id="progress-fill"></div>
+        <section class="text-center py-2">
+            <span id="event-status"
+                class="inline-block font-bangla text-[0.8rem] font-bold tracking-wider text-gold bg-gold-dim rounded-full px-4 py-1 mb-3">
+                ইফতারের বাকি
+            </span>
+            <div id="countdown" class="font-display text-[4.25rem] font-bold leading-none tracking-wider mb-5">
+                00:00:00
+            </div>
+            <div class="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                <div id="progress-fill"
+                    class="h-full w-0 bg-gold rounded-full shadow-[0_0_12px_#ffd700] transition-[width] duration-1000 ease-linear">
+                </div>
             </div>
         </section>
 
         <!-- Sehar / Iftar Cards -->
-        <section class="time-cards">
-            <div class="time-card">
-                <div class="time-card-icon">
-                    <i data-lucide="sunrise"></i>
+        <section class="grid grid-cols-2 gap-3">
+            <!-- Sehar -->
+            <div
+                class="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-5 flex flex-col gap-3 hover:border-white/20 hover:-translate-y-0.5 transition-all duration-300">
+                <div class="w-9 h-9 bg-gold-dim rounded-xl flex items-center justify-center">
+                    <i data-lucide="moon-star" class="w-[18px] h-[18px] text-gold"></i>
                 </div>
-                <div class="time-card-body">
-                    <span class="card-label bn-label">সেহরি শেষ</span>
-                    <span class="card-label en-label">SEHAR ENDS</span>
-                    <span class="card-time" id="sehar-time">--:--</span>
+                <div class="flex flex-col gap-0.5">
+                    <span class="bn-label font-bangla text-[0.85rem] font-semibold text-white">সেহরি শেষ</span>
+                    <span class="en-label text-[0.65rem] font-bold text-white/50 tracking-wider uppercase">SEHAR
+                        ENDS</span>
+                    <span id="sehar-time" class="font-display text-2xl font-bold text-white mt-1">--:--</span>
                 </div>
             </div>
-            <div class="time-card">
-                <div class="time-card-icon">
-                    <i data-lucide="sunset"></i>
+
+            <!-- Iftar -->
+            <div
+                class="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-5 flex flex-col gap-3 hover:border-white/20 hover:-translate-y-0.5 transition-all duration-300">
+                <div class="w-9 h-9 bg-gold-dim rounded-xl flex items-center justify-center">
+                    <i data-lucide="utensils" class="w-[18px] h-[18px] text-gold"></i>
                 </div>
-                <div class="time-card-body">
-                    <span class="card-label bn-label">ইফতার শুরু</span>
-                    <span class="card-label en-label">IFTAR STARTS</span>
-                    <span class="card-time" id="iftar-time">--:--</span>
+                <div class="flex flex-col gap-0.5">
+                    <span class="bn-label font-bangla text-[0.85rem] font-semibold text-white">ইফতার শুরু</span>
+                    <span class="en-label text-[0.65rem] font-bold text-white/50 tracking-wider uppercase">IFTAR
+                        STARTS</span>
+                    <span id="iftar-time" class="font-display text-2xl font-bold text-white mt-1">--:--</span>
                 </div>
             </div>
         </section>
 
-        <!-- All Prayer Times -->
-        <section class="prayer-section">
-            <button id="toggle-tray" class="prayer-toggle-btn">
-                <span class="prayer-toggle-label">আজকের নামাজের সময়</span>
-                <i data-lucide="chevron-down"></i>
+        <!-- Prayer Times Expandable -->
+        <section class="flex flex-col">
+            <button id="toggle-tray"
+                class="prayer-toggle-btn w-full bg-white/5 border border-white/10 backdrop-blur-sm rounded-2xl px-4 py-3 cursor-pointer flex items-center justify-between hover:bg-white/10 transition-colors">
+                <span class="prayer-toggle-label font-bangla text-[0.85rem] font-semibold text-white/90">আজকের নামাজের
+                    সময়</span>
+                <i data-lucide="chevron-down"
+                    class="w-4 h-4 text-white/40 transition-transform duration-300 chevron-icon"></i>
             </button>
-            <div class="prayer-list" id="full-prayer-grid">
+            <div id="full-prayer-grid"
+                class="prayer-list grid grid-cols-2 gap-2 mt-3 max-h-0 overflow-hidden opacity-0 transition-all duration-400">
                 <!-- JS populates -->
             </div>
         </section>
 
     </div>
+
     <script src="app.js"></script>
 </body>
 
