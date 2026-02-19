@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     updateDateTime();
     setInterval(updateDateTime, 1000);
-    // Initialize body class
-    document.body.className = `lang-${currentLang}`;
 });
 
 let currentLang = 'bn'; // Default to Bengali
@@ -46,11 +44,9 @@ function updateDateTime() {
     const now = new Date();
     const t = translations[currentLang];
 
-    // Format Date: e.g., "Thursday, 19 Feb 2026"
     const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
     document.getElementById('current-date').textContent = now.toLocaleDateString(t.date_locale, options).toUpperCase();
 
-    // Format Time: e.g., "06:15:26 PM"
     const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
     document.getElementById('current-time').textContent = now.toLocaleTimeString(t.date_locale, timeOptions);
 }
@@ -69,14 +65,13 @@ function setupEventListeners() {
         currentLang = currentLang === 'bn' ? 'en' : 'bn';
         document.body.className = `lang-${currentLang}`;
         updateLanguageUI();
-        updateDateTime(); // Immediate refresh
+        updateDateTime();
     });
 }
 
 function updateLanguageUI() {
     const t = translations[currentLang];
 
-    // Update Toggle Button State
     const enBtn = document.querySelector('.lang-en');
     const bnBtn = document.querySelector('.lang-bn');
     if (currentLang === 'en') {
@@ -87,13 +82,9 @@ function updateLanguageUI() {
         bnBtn.classList.add('active');
     }
 
-    // Update Tray Label
     document.querySelector('.tray-toggle span:first-child').textContent = t.tray_label;
-
-    // Update Location
     document.querySelector('.location span').textContent = t.dhaka;
 
-    // Refresh Prayer Grid for translated names
     const cachedData = getCachedTimings();
     if (cachedData) {
         const today = new Date();
@@ -149,20 +140,15 @@ function updateUI(calendarData) {
 
     if (!todayData) return;
 
-    // Hijri Date
     const h = todayData.date.hijri;
     document.getElementById('hijri-date').textContent = `${h.day} ${h.month.en} ${h.year}`;
 
-    // Timings
     const seharTime = todayData.timings.Fajr.split(' ')[0];
     const iftarTime = todayData.timings.Maghrib.split(' ')[0];
     document.getElementById('sehar-time').textContent = formatTime(seharTime);
     document.getElementById('iftar-time').textContent = formatTime(iftarTime);
 
-    // Populate Prayer Grid
     populatePrayerGrid(todayData.timings);
-
-    // Start Logic
     startCountdown(calendarData);
 }
 
@@ -204,39 +190,48 @@ function startCountdown(calendarData) {
         const [iH, iM] = todayTimings.Maghrib.split(' ')[0].split(':').map(Number);
 
         const seharDate = new Date(now);
-        seharDate.setHours(sH, sM, 0);
+        seharDate.setHours(sH, sM, 0, 0);
 
         const iftarDate = new Date(now);
-        iftarDate.setHours(iH, iM, 0);
+        iftarDate.setHours(iH, iM, 0, 0);
 
         let target, statusText, startTime;
 
         if (now < seharDate) {
             target = seharDate;
             statusText = t.countdown_sehar;
-            const prevDayIdx = dayIdx > 0 ? dayIdx - 1 : 0;
-            const prevIftar = calendarData[prevDayIdx].timings.Maghrib.split(' ')[0];
-            const [pIH, pIM] = prevIftar.split(':').map(Number);
-            const prevDate = new Date(now);
-            if (dayIdx > 0) prevDate.setDate(prevDate.getDate() - 1);
-            startTime = prevDate.setHours(pIH, pIM, 0);
+
+            // Start from previous Iftar
+            let prevIftarDate;
+            if (dayIdx > 0) {
+                const prevTimings = calendarData[dayIdx - 1].timings;
+                const [pIH, pIM] = prevTimings.Maghrib.split(' ')[0].split(':').map(Number);
+                prevIftarDate = new Date(now);
+                prevIftarDate.setDate(prevIftarDate.getDate() - 1);
+                prevIftarDate.setHours(pIH, pIM, 0, 0);
+            } else {
+                // Approximate fallback for 1st of month: 11 hours before Sehar
+                prevIftarDate = new Date(seharDate.getTime() - (11 * 3600000));
+            }
+            startTime = prevIftarDate.getTime();
         } else if (now < iftarDate) {
             target = iftarDate;
             statusText = t.countdown_iftar;
             startTime = seharDate.getTime();
         } else {
+            statusText = t.countdown_sehar_tomorrow;
             const nextDay = calendarData[dayIdx + 1];
             if (nextDay) {
                 const [tsH, tsM] = nextDay.timings.Fajr.split(' ')[0].split(':').map(Number);
                 const tmDate = new Date(now);
                 tmDate.setDate(tmDate.getDate() + 1);
-                target = tmDate.setHours(tsH, tsM, 0);
-                statusText = t.countdown_sehar_tomorrow;
-                startTime = iftarDate.getTime();
+                tmDate.setHours(tsH, tsM, 0, 0);
+                target = tmDate;
             } else {
-                statusEl.textContent = "END OF MONTH";
-                return;
+                // Fallback for end of month
+                target = new Date(now.getTime() + (10 * 3600000));
             }
+            startTime = iftarDate.getTime();
         }
 
         const diff = target - now;
@@ -245,9 +240,10 @@ function startCountdown(calendarData) {
 
         progressBar.style.width = `${progress}%`;
 
-        const h = String(Math.floor(diff / 3600000)).padStart(2, '0');
-        const m = String(Math.floor((diff % 3600000) / 60000)).padStart(2, '0');
-        const s = String(Math.floor((diff % 60000) / 1000)).padStart(2, '0');
+        const totalSeconds = Math.max(0, Math.floor(diff / 1000));
+        const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+        const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+        const s = String(totalSeconds % 60).padStart(2, '0');
 
         statusEl.textContent = statusText;
         countdownEl.textContent = `${h}:${m}:${s}`;
