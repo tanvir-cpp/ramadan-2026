@@ -6,6 +6,11 @@
    Custom styles
    ========================================== */
 
+/* Background overlay dimming */
+.bg-overlay {
+    filter: brightness(0.25) saturate(1.2);
+}
+
 /* Language visibility toggle */
 body.lang-en .bn-label,
 body.lang-bn .en-label {
